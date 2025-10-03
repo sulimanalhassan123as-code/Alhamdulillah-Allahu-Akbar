@@ -33,20 +33,22 @@ async function fetchResults(query) {
   } finally {
     // --- Stop the "Searching" animation ---
     animatedBorder.classList.remove('searching');
-    if (!loadingMessage.textContent.includes('Failed')) {
-      if (resultsContainer.hasChildNodes()) {
-         loadingMessage.textContent = '';
-      }
+    // Clear the "Searching..." message if results are found or if there was an error
+    if (resultsContainer.hasChildNodes() || loadingMessage.textContent.includes('Failed')) {
+       // Let the displayResults function handle the message
+    } else if (!loadingMessage.textContent.includes('No results')) {
+       loadingMessage.textContent = '';
     }
   }
 }
 
 function displayResults(data) {
   if (data.items && data.items.length > 0) {
-    // Display the result count professionally
     const searchInfo = data.searchInformation;
     if (searchInfo) {
       loadingMessage.textContent = `About ${searchInfo.formattedTotalResults} results (${searchInfo.formattedSearchTime} seconds)`;
+    } else {
+      loadingMessage.textContent = '';
     }
 
     data.items.forEach(item => {
