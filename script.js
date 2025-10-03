@@ -1,30 +1,3 @@
-// --- THEME SWITCHER LOGIC ---
-const themeToggle = document.getElementById('theme-toggle');
-const sunIcon = document.getElementById('theme-icon-sun');
-const moonIcon = document.getElementById('theme-icon-moon');
-
-// Function to set the theme
-function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme); // Save the choice
-}
-
-// Event listener for the toggle button
-themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    if (currentTheme === 'dark') {
-        setTheme('light');
-    } else {
-        setTheme('dark');
-    }
-});
-
-// Check for saved theme preference on page load
-const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
-setTheme(savedTheme);
-
-
-// --- SEARCH LOGIC (from before) ---
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const resultsContainer = document.getElementById('search-results-container');
@@ -40,9 +13,10 @@ searchForm.addEventListener('submit', function (event) {
 });
 
 async function fetchResults(query) {
+  // --- Start the "Searching" animation ---
   animatedBorder.classList.add('searching');
   loadingMessage.textContent = 'Searching...';
-  resultsContainer.innerHTML = '';
+  resultsContainer.innerHTML = ''; // Clear old results
 
   const apiUrl = `/.netlify/functions/search?q=${encodeURIComponent(query)}`;
 
@@ -57,17 +31,21 @@ async function fetchResults(query) {
     console.error("Error fetching search results:", error);
     loadingMessage.textContent = 'Failed to fetch search results.';
   } finally {
+    // --- Stop the "Searching" animation ---
     animatedBorder.classList.remove('searching');
     if (!loadingMessage.textContent.includes('Failed')) {
-      if (resultsContainer.hasChildNodes()) {
-         loadingMessage.textContent = '';
-      }
+      loadingMessage.textContent = '';
     }
   }
 }
 
 function displayResults(data) {
   if (data.items && data.items.length > 0) {
+    const searchInfo = data.searchInformation;
+    if (searchInfo) {
+      loadingMessage.textContent = `About ${searchInfo.formattedTotalResults} results (${searchInfo.formattedSearchTime} seconds)`;
+    }
+
     data.items.forEach(item => {
       const resultElement = document.createElement('div');
       resultElement.classList.add('search-result-item');
@@ -82,4 +60,4 @@ function displayResults(data) {
   } else {
     loadingMessage.textContent = 'No results found for your query.';
   }
-  }
+}```
