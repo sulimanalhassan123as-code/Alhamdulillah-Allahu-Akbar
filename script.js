@@ -34,13 +34,16 @@ async function fetchResults(query) {
     // --- Stop the "Searching" animation ---
     animatedBorder.classList.remove('searching');
     if (!loadingMessage.textContent.includes('Failed')) {
-      loadingMessage.textContent = '';
+      if (resultsContainer.hasChildNodes()) {
+         loadingMessage.textContent = '';
+      }
     }
   }
 }
 
 function displayResults(data) {
   if (data.items && data.items.length > 0) {
+    // Display the result count professionally
     const searchInfo = data.searchInformation;
     if (searchInfo) {
       loadingMessage.textContent = `About ${searchInfo.formattedTotalResults} results (${searchInfo.formattedSearchTime} seconds)`;
@@ -60,4 +63,4 @@ function displayResults(data) {
   } else {
     loadingMessage.textContent = 'No results found for your query.';
   }
-}```
+}
